@@ -1,11 +1,39 @@
 <template>
   <div class="new-note">
     <label>Title
-      <input v-model="note.title" type="text">
+      <input v-model="note.title" type="text" style="margin: 10px;">
     </label>
+    
     <label>Description
-      <textarea v-model="note.descr"></textarea>
+      <textarea v-model="note.descr" style="margin: 10px;"></textarea>
     </label>
+  
+    <h2>Priority</h2>
+    <div class="priority-wrp">
+      <label>Standart
+        <input
+          type="radio"
+          v-model="note.priority"
+          value="standart"
+          checked
+        >
+      </label>
+      <label>Important
+        <input
+          type="radio"
+          v-model="note.priority"
+          value="important"
+        >
+      </label>
+      <label>Critical
+        <input
+          type="radio"
+          v-model="note.priority"
+          value="critical"
+        >
+      </label>
+    </div>
+    
     <button class="btn btnPrimary" @click="addNote">New note</button>
   </div>
 </template>
@@ -19,7 +47,8 @@
         required: true,
         default: {
           title: '',
-          descr: ''
+          descr: '',
+          priority: 'standart'
         }
       }
     },
@@ -34,5 +63,17 @@
 <style lang="scss" scoped>
   .new-note {
     text-align: center;
+  }
+  
+  .priority-wrp {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+    
+    & label {
+      cursor: pointer;
+    }
+    
+    
   }
 </style>

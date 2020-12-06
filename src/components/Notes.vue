@@ -1,12 +1,45 @@
 <template>
   <div class="notes">
-    <div class="note" :class="{ full: !grid }" v-for="(note, index) in notes" :key="index">
+    <div
+      class="note"
+      :class="{
+        full: !grid,
+        standart: note.priority === 'standart',
+        important: note.priority === 'important',
+        critical: note.priority === 'critical',
+      }"
+      v-for="(note, index) in notes"
+      :key="note.id"
+    >
       <div class="note-header">
-        <p>{{ note.title }}</p>
-        <p style="cursor: pointer" @click="removeNote(index)">x</p>
+        <p
+          @click="changeTitleNote(note.id)"
+          v-show="!note.change.title"
+        >
+          {{ note.title }}
+        </p>
+        <input
+          type="text"
+          v-show="note.change.title"
+          v-model="note.change.title"
+          @keyup.enter="saveTitleNote(note.id)"
+          @keyup.esc="exitChangeTitleNote(note.id)"
+        >
+        <p style="cursor: pointer; margin: 0 0 0 10px;" @click="removeNote(index)">x</p>
       </div>
       <div class="note-body">
-        <p>{{ note.descr }}</p>
+        <p
+          @click="changeDescrNote(note.id)"
+          v-show="!note.change.descr"
+        >
+          {{ note.descr }}
+        </p>
+        <textarea
+          v-model="note.change.descr"
+          v-show="note.change.descr"
+          @keyup.enter="saveDescrNote(note.id)"
+          @keyup.esc="exitChangeDescrNote(note.id)"
+        ></textarea>
         <span>{{ note.date }}</span>
       </div>
     </div>
@@ -32,7 +65,25 @@
       removeNote(index) {
         console.log(`Note id - ${index} removed`)
         this.$emit('remove', index)
-      }
+      },
+      changeTitleNote(id) {
+        this.$emit('changeTitle', id)
+      },
+      changeDescrNote(id) {
+        this.$emit('changeDescr', id)
+      },
+      saveTitleNote(id) {
+        this.$emit('saveTitle', id)
+      },
+      exitChangeTitleNote(id) {
+        this.$emit('exitChangeTitle', id)
+      },
+      saveDescrNote(id) {
+        this.$emit('saveDescr', id)
+      },
+      exitChangeDescrNote(id) {
+        this.$emit('exitChangeDescr', id)
+      },
     }
   }
 </script>
@@ -53,11 +104,13 @@
     background-color: #ffffff;
     transition: all .25s cubic-bezier(.02, .01, .47, 1);
     cursor: pointer;
+    
     &:hover {
       box-shadow: 0 30px 30px rgba(0, 0, 0, .04);
       transform: translate(0, -6px);
       transition-delay: 0s !important;
     }
+    
     &.full {
       width: 100%;
       display: flex;
@@ -72,11 +125,22 @@
         }
       }
     }
+    
+    &.standart {
+      box-shadow: 0 30px 30px rgba(0, 0, 0, .04);
+    }
+  
+    &.important {
+      box-shadow: 0 0 30px rgb(255, 235, 59 / 61%);
+    }
+  
+    &.critical {
+      box-shadow: 0 0 30px #F44336;
+    }
   }
 
   .note-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
 
     p {
